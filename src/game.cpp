@@ -4,6 +4,10 @@
 Game::Game()
 {
     isFiring = false;
+    for (uint8_t i = 0; i < NUMBER_OF_LISTENERS; i++)
+    {
+        listeners[i] = 0;
+    }
 }
 
 void Game::handleFire()
@@ -22,14 +26,14 @@ void Game::handleFire()
                 lastFireTime = millis();
                 notifyEvent(GameEventType::FIRING_SHOT);
                 ammo--;
-                Serial.print("Game::update: Firing, remaining ammo ");
+                Serial.print(F("Game::update: Firing, remaining ammo "));
                 Serial.println(ammo);
             }
             else
             {
                 lastFireTime = millis() - maxCoolDown;
                 notifyEvent(GameEventType::FIRING_SHOT_NO_AMMO);
-                Serial.println("Game::update: No more ammo...");
+                Serial.println(F("Game::update: No more ammo..."));
             }
         }
         else
@@ -44,7 +48,7 @@ void Game::handleHit()
     if (health > 0)
     {
         health--;
-        Serial.print("Game::onShot: Players health ");
+        Serial.print(F("Game::onShot: Players health "));
         Serial.println(health);
         if (health == 0)
         {
@@ -57,16 +61,19 @@ void Game::handleHit()
     }
     else
     {
-        Serial.println("Game::onShot: Player dead");
+        Serial.println(F("Game::onShot: Player dead"));
         notifyEvent(GameEventType::HIT_DEAD);
     }
 }
 
 void Game::notifyEvent(GameEventType eventType)
 {
-    for (int i = 0; i < listeners.size(); i++)
+    for (int i = 0; i < NUMBER_OF_LISTENERS; i++)
     {
-        listeners.get(i)->onGameEvent(eventType);
+        if (listeners[i])
+        {
+            listeners[i]->onGameEvent(eventType);
+        }
     }
 }
 
@@ -76,16 +83,16 @@ void Game::update()
     notifyEvent(GameEventType::GAME_TICK);
 }
 
-void Game::setup(unsigned int teamId, unsigned int maxHealth, unsigned int maxAmmo, unsigned int maxCoolDown)
+void Game::setup(uint8_t teamId, uint8_t maxHealth, uint8_t maxAmmo, uint16_t maxCoolDown)
 {
     // Try to create randomness and generate a player id
     randomSeed(analogRead(A0));
     playerId = random() % 1024;
     teamId = teamId;
 
-    Serial.print("Game::setup: Starting as player #");
+    Serial.print(F("Game::setup: Starting as player #"));
     Serial.print(playerId);
-    Serial.print(" on team ");
+    Serial.print(F(" on team "));
     Serial.println(teamId);
 
     health = maxHealth;
@@ -104,7 +111,7 @@ void Game::onReceivedShot(uint32_t code)
 {
     if (code == 88)
     {
-        Serial.print("Game::onShot: Received a shot from ");
+        Serial.print(F("Game::onShot: Received a shot from "));
         Serial.println(code);
         handleHit();
     }
@@ -120,17 +127,17 @@ void Game::onStopFire()
     isFiring = false;
 }
 
-unsigned int Game::getPlayerId()
+uint8_t Game::getPlayerId()
 {
     return playerId;
 }
 
-unsigned int Game::getMaxHealth()
+uint8_t Game::getMaxHealth()
 {
     return maxHealth;
 }
 
-unsigned int Game::getCurrentCoolDown()
+uint16_t Game::getCurrentCoolDown()
 {
     if (lastFireTime + maxCoolDown < millis())
     {
@@ -139,16 +146,24 @@ unsigned int Game::getCurrentCoolDown()
     return lastFireTime + maxCoolDown - millis();
 }
 
-unsigned int Game::getMaxCoolDown()
+uint16_t Game::getMaxCoolDown()
 {
     return maxCoolDown;
 }
 
 void Game::addListener(GameListener *listener)
 {
-    listeners.add(listener);
+    for (int i = 0; i < NUMBER_OF_LISTENERS; i++)
+    {
+        if (listeners[i] == 0)
+        {
+            listeners[i] = listener;
+            return;
+        }
+    }
 }
 
-unsigned int Game::getCurrentHealth() {
+uint8_t Game::getCurrentHealth()
+{
     return health;
 }

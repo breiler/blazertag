@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <FastLED.h>
-#include "ledanimator.h"
+#include "listeners/ledanimator.h"
 
 // How many leds in your strip?
 #define NUM_LEDS 2

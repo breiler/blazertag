@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "game.h"
 #include "input.h"
-#include "ledanimator.h"
+#include "listeners/ledanimator.h"
 
 // Game attributes
 #define TEAM_ID 0

@@ -46,11 +46,10 @@ jobs:
           pip install --upgrade platformio
           
       - name: Build
-        run: pio run -e uno
+        run: pio run -e uno -e nano
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          # Artifact name
-          name: uno-firmware
-          path: .pio/build/uno/firmware.*
+          name: firmwares
+          path: .pio/build/**/firmware.*

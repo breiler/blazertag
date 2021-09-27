@@ -4,6 +4,10 @@
 
 Input::Input()
 {
+    for (uint8_t i = 0; i < NUMBER_OF_INPUT_LISTENERS; i++)
+    {
+        listeners[i] = 0;
+    }
 }
 
 Input::~Input()
@@ -12,27 +16,34 @@ Input::~Input()
 
 void Input::addListener(InputListener *listener)
 {
-    listeners.add(listener);
+    for (uint8_t i = 0; i < NUMBER_OF_INPUT_LISTENERS; i++)
+    {
+        if (listeners[i] == 0)
+        {
+            listeners[i] = listener;
+            return;
+        }
+    }
 }
 
-void Input::setup(unsigned int irReceivePin, unsigned int triggerPin)
+void Input::setup(uint8_t irReceivePin, uint8_t triggerPin)
 {
     this->irReceivePin = irReceivePin;
     this->triggerPin = triggerPin;
 
-    Serial.print("Input::setup: Initializing IR feedback on pin ");
+    Serial.print(F("Input::setup: Initializing IR feedback on pin "));
     Serial.println(LED_BUILTIN);
     pinMode(LED_BUILTIN, OUTPUT);
 
-    Serial.print("Input::setup: Initializing IR reciver on pin ");
+    Serial.print(F("Input::setup: Initializing IR reciver on pin "));
     Serial.println(irReceivePin);
     IrReceiver.begin(irReceivePin, ENABLE_LED_FEEDBACK, USE_DEFAULT_FEEDBACK_LED_PIN); // Start the receiver, enable feedback LED, take LED feedback pin from the internal boards definition
 
-    Serial.print("Input::setup: Initialization trigger on pin ");
+    Serial.print(F("Input::setup: Initialization trigger on pin "));
     Serial.println(triggerPin);
     pinMode(triggerPin, INPUT_PULLUP);
 
-    Serial.println("Input::setup: Initialization complete");
+    Serial.println(F("Input::setup: Initialization complete"));
 }
 
 void Input::update()
@@ -76,24 +87,33 @@ void Input::readIR()
 
 void Input::notifyShot(unsigned int code)
 {
-    for (int i = 0; i < listeners.size(); i++)
+    for (int i = 0; i < NUMBER_OF_INPUT_LISTENERS; i++)
     {
-        listeners.get(i)->onReceivedShot(code);
+        if (listeners[i] != 0)
+        {
+            listeners[i]->onReceivedShot(code);
+        }
     }
 }
 
 void Input::notifyFiring()
 {
-    for (int i = 0; i < listeners.size(); i++)
+    for (int i = 0; i < NUMBER_OF_INPUT_LISTENERS; i++)
     {
-        listeners.get(i)->onFire();
+        if (listeners[i] != 0)
+        {
+            listeners[i]->onFire();
+        }
     }
 }
 
 void Input::notifyStopFiring()
 {
-    for (int i = 0; i < listeners.size(); i++)
+    for (int i = 0; i < NUMBER_OF_INPUT_LISTENERS; i++)
     {
-        listeners.get(i)->onStopFire();
+        if (listeners[i] != 0)
+        {
+            listeners[i]->onStopFire();
+        }
     }
 }

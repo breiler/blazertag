@@ -1,27 +1,27 @@
 #ifndef __GAME_H
 #define __GAME_H
 
-#include <LinkedList.h>
 #include "inputlistener.h"
 #include "gamelistener.h"
+#define NUMBER_OF_LISTENERS 10
 
 class Game : public InputListener
 {
 private:
-    LinkedList<GameListener *> listeners;
+    GameListener* listeners[NUMBER_OF_LISTENERS];
 
     bool isFiring;
     unsigned long lastFireTime;
 
-    unsigned int playerId;
-    unsigned int teamId;
+    uint8_t playerId;
+    uint8_t teamId;
 
-    unsigned int health;
-    unsigned int ammo;
+    uint8_t health;
+    uint8_t ammo;
 
-    unsigned int maxHealth;
-    unsigned int maxAmmo;
-    unsigned long maxCoolDown;
+    uint8_t maxHealth;
+    uint8_t maxAmmo;
+    uint16_t maxCoolDown;
 
     void handleFire();
     void handleHit();
@@ -32,17 +32,17 @@ private:
 
 public:
     Game();
-    void setup(unsigned int teamId, unsigned int maxHealth, unsigned int maxAmmo, unsigned int maxCoolDown);
+    void setup(uint8_t teamId, uint8_t maxHealth, uint8_t maxAmmo, uint16_t maxCoolDown);
     void update();
     void addListener(GameListener *listener);
 
-    unsigned int getPlayerId();
-    unsigned int getCurrentHealth();
-    unsigned int getMaxHealth();
-    unsigned int getCurrentAmmo();
-    unsigned int getMaxAmmo();
-    unsigned int getCurrentCoolDown();
-    unsigned int getMaxCoolDown();
+    uint8_t getPlayerId();
+    uint8_t getCurrentHealth();
+    uint8_t getMaxHealth();
+    uint8_t getCurrentAmmo();
+    uint8_t getMaxAmmo();
+    uint16_t getCurrentCoolDown();
+    uint16_t getMaxCoolDown();
 };
 
 #endif

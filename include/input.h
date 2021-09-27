@@ -5,15 +5,17 @@
 #include <IRremoteInt.h>
 #include "inputlistener.h"
 
+#define NUMBER_OF_INPUT_LISTENERS 10
+
 class Input {
     private:
-        unsigned int irReceivePin;
-        unsigned int triggerPin;
+        uint8_t irReceivePin;
+        uint8_t triggerPin;
 
         unsigned long lastUpdateTime;
         bool isFiring;
 
-        LinkedList<InputListener*> listeners;
+        InputListener* listeners[NUMBER_OF_INPUT_LISTENERS];
 
         void readIR();
         void readTrigger();
@@ -25,7 +27,7 @@ class Input {
     public: 
         Input();
         ~Input();
-        void setup(unsigned int irReceivePin, unsigned int triggerPin);
+        void setup(uint8_t irReceivePin, uint8_t triggerPin);
         void update();
         void addListener(InputListener* listener);
 };
