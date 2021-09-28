@@ -23,9 +23,9 @@ void Game::handleFire()
         {
             if (ammo > 0)
             {
+                ammo--;
                 lastFireTime = millis();
                 notifyEvent(GameEventType::FIRING_SHOT);
-                ammo--;
                 Serial.print(F("Game::update: Firing, remaining ammo "));
                 Serial.println(ammo);
             }
@@ -166,4 +166,14 @@ void Game::addListener(GameListener *listener)
 uint8_t Game::getCurrentHealth()
 {
     return health;
+}
+
+uint8_t Game::getCurrentAmmo()
+{
+    return ammo;
+}
+
+uint8_t Game::getMaxAmmo()
+{
+    return maxAmmo;
 }

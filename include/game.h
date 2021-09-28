@@ -1,8 +1,10 @@
 #ifndef __GAME_H
 #define __GAME_H
 
+#include <Arduino.h>
 #include "inputlistener.h"
 #include "gamelistener.h"
+#include "gameeventtype.h"
 #define NUMBER_OF_LISTENERS 10
 
 class Game : public InputListener

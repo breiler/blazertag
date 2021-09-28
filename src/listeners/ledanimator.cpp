@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include "listeners/ledanimator.h"
+#include "gameeventtype.h"
 
 // How many leds in your strip?
 #define NUM_LEDS 2
@@ -21,7 +22,7 @@ LedAnimator::LedAnimator()
     animationType = AnimationType::ANIMATION_IDLE;
 }
 
-void LedAnimator::setup(Game *game)
+void LedAnimator::setup(Game* game)
 {
     this->game = game;
 }
@@ -35,23 +36,20 @@ void LedAnimator::handleIdleAnimation()
         return;
     }
 
-    leds[0].red = 0;
-    leds[0].green = 0;
-
-    int color = 0;
+    float factor = 0;
     if (currentFrame < 1)
     {
-         color = (40 * currentFrame) + 1;
+         factor = (0.02F * currentFrame);
     }
     else
     {
-        color = (40 - (40 * (currentFrame - 1))) + 1;
+        factor = (0.02F - (0.02F * (currentFrame - 1)));
     }
 
     if(game->getCurrentHealth() == 0) {
-        leds[0].red = color;
+        leds[0].setRGB(255 * factor, 0, 0);
     } else {
-        leds[0].green = color;
+        leds[0].setRGB(53 * factor, 133 * factor, 179 * factor);
     }
 
     FastLED.show();
@@ -100,16 +98,16 @@ void LedAnimator::handleFireAnimation()
     FastLED.show();
 }
 
-void LedAnimator::onGameEvent(GameEventType gameEvent)
+void LedAnimator::onGameEvent(GameEventType gameEventType)
 {
-    if (gameEvent == GameEventType::FIRING_SHOT)
+    if (gameEventType == GameEventType::FIRING_SHOT)
     {
         Serial.println("LedAnimator::onGameEvent: Starting animation FIRE");
         lastUpdateTime = millis();
         this->animationType = AnimationType::ANIMATION_FIRE;
     }
 
-    if (gameEvent == GameEventType::HIT)
+    if (gameEventType == GameEventType::HIT)
     {
         Serial.println("LedAnimator::onGameEvent: Starting animation HIT");
         lastUpdateTime = millis();

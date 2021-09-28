@@ -2,6 +2,7 @@
 #include "game.h"
 #include "input.h"
 #include "listeners/ledanimator.h"
+#include "listeners/oled.h"
 
 // Game attributes
 #define TEAM_ID 0
@@ -16,13 +17,15 @@
 Input input;
 Game game;
 LedAnimator ledAnimator;
+Oled oled;
 
 void setup()
 {
     // Initialize the serial output
     Serial.begin(9600);
     delay(2000);
-    while (!Serial); //delay for Leonardo
+    while (!Serial)
+        ; //delay for Leonardo
 
     // Initialize the game engine
     game.setup(TEAM_ID, MAX_LIFE, MAX_AMMO, COOL_DOWN);
@@ -32,6 +35,10 @@ void setup()
     // Add light visualizations
     ledAnimator.setup(&game);
     game.addListener(&ledAnimator);
+
+    // Add Oled
+    oled.setup(&game);
+    game.addListener(&oled);
 }
 
 void loop()

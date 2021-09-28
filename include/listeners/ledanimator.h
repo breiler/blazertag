@@ -1,8 +1,9 @@
 #ifndef __LEDANIMATOR_H
 #define __LEDANIMATOR_H
 
+#include "gameeventtype.h"
 #include "game.h"
-#include "gamelistener.h"
+
 
 enum AnimationType {
     ANIMATION_HIT,
@@ -13,10 +14,10 @@ enum AnimationType {
 class LedAnimator : public GameListener
 {
 private:
-    Game *game;
     unsigned long lastAnimationFrameTime;
     unsigned long lastUpdateTime;
     bool isOn;
+    Game* game;
     AnimationType animationType;
     
     void handleIdleAnimation();
@@ -25,8 +26,8 @@ private:
 
 public:
     LedAnimator();
-    void setup(Game *game);
-    void onGameEvent(GameEventType event);
+    void setup(Game* game);
+    void onGameEvent(GameEventType gameEventType);
 };
 
 #endif
