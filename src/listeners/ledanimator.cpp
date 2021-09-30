@@ -22,9 +22,34 @@ LedAnimator::LedAnimator()
     animationType = AnimationType::ANIMATION_IDLE;
 }
 
-void LedAnimator::setup(Game* game)
+void LedAnimator::setup(Game *game)
 {
     this->game = game;
+}
+
+void LedAnimator::handleGameOverAnimation()
+{
+    int interval = BLINK_INTERVAL / 6;
+    float currentFrame = (float)((lastUpdateTime + interval) - millis()) / (float)interval / 2;
+    if (currentFrame < 0 || currentFrame > interval / 2)
+    {
+        lastUpdateTime = millis();
+        return;
+    }
+
+    float factor = 0;
+    if (currentFrame < 1)
+    {
+        factor = currentFrame;
+    }
+    else
+    {
+        factor = 1 - (currentFrame - 1);
+    }
+
+    leds[0].setRGB(255 * factor, 0, 0);
+
+    FastLED.show();
 }
 
 void LedAnimator::handleIdleAnimation()
@@ -39,16 +64,19 @@ void LedAnimator::handleIdleAnimation()
     float factor = 0;
     if (currentFrame < 1)
     {
-         factor = (0.02F * currentFrame);
+        factor = currentFrame;
     }
     else
     {
-        factor = (0.02F - (0.02F * (currentFrame - 1)));
+        factor = 1 - (currentFrame - 1);
     }
 
-    if(game->getCurrentHealth() == 0) {
+    if (game->getCurrentHealth() == 0)
+    {
         leds[0].setRGB(255 * factor, 0, 0);
-    } else {
+    }
+    else
+    {
         leds[0].setRGB(53 * factor, 133 * factor, 179 * factor);
     }
 
@@ -57,8 +85,8 @@ void LedAnimator::handleIdleAnimation()
 
 void LedAnimator::handleHitAnimation()
 {
-    float interval = BLINK_INTERVAL/2;
-    float currentFrame = (float)((lastUpdateTime + interval) - millis()) / (interval/2);
+    float interval = BLINK_INTERVAL / 3;
+    float currentFrame = (float)((lastUpdateTime + interval) - millis()) / (interval / 2);
     if (currentFrame < 0 || currentFrame > interval)
     {
         lastUpdateTime = millis();
@@ -67,17 +95,13 @@ void LedAnimator::handleHitAnimation()
         return;
     }
 
-    leds[0].green = 0;
-
     if (currentFrame < 1)
     {
-        // Turn the LED on, then pause
-        leds[0].red = (127 * currentFrame) + 1;
+        leds[0].setRGB((255 * currentFrame) + 1, 0, 20 * currentFrame);
     }
     else
     {
-        // Now turn the LED off, then pause
-        leds[0].red = (127- (127 * (currentFrame - 1)));
+        leds[0].setRGB((255 - (255 * (currentFrame - 1))), 0, 20 - (20 * (currentFrame - 1)));
     }
 
     FastLED.show();
@@ -102,16 +126,23 @@ void LedAnimator::onGameEvent(GameEventType gameEventType)
 {
     if (gameEventType == GameEventType::FIRING_SHOT)
     {
-        Serial.println("LedAnimator::onGameEvent: Starting animation FIRE");
+        Serial.println(F("LedAnimator::onGameEvent: Starting animation FIRE"));
         lastUpdateTime = millis();
         this->animationType = AnimationType::ANIMATION_FIRE;
     }
 
     if (gameEventType == GameEventType::HIT)
     {
-        Serial.println("LedAnimator::onGameEvent: Starting animation HIT");
+        Serial.println(F("LedAnimator::onGameEvent: Starting animation HIT"));
         lastUpdateTime = millis();
         this->animationType = AnimationType::ANIMATION_HIT;
+    }
+
+    if (gameEventType == GameEventType::HIT_DEAD || gameEventType == GameEventType::HIT_KILLED || gameEventType == GameEventType::GAME_OVER)
+    {
+        Serial.println(F("LedAnimator::onGameEvent: Starting animation GAME OVER"));
+        lastUpdateTime = millis();
+        this->animationType = AnimationType::ANIMATION_GAME_OVER;
     }
 
     // Render with 20 FPS (1000ms/20fps = 50ms/frame)
@@ -129,6 +160,10 @@ void LedAnimator::onGameEvent(GameEventType gameEventType)
         else if (animationType == AnimationType::ANIMATION_HIT)
         {
             handleHitAnimation();
+        }
+        else if (animationType == AnimationType::ANIMATION_GAME_OVER)
+        {
+            handleGameOverAnimation();
         }
     }
 }

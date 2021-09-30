@@ -83,11 +83,11 @@ void Game::update()
     notifyEvent(GameEventType::GAME_TICK);
 }
 
-void Game::setup(uint8_t teamId, uint8_t maxHealth, uint8_t maxAmmo, uint16_t maxCoolDown)
+void Game::setup(uint8_t teamId, uint16_t maxHealth, uint16_t maxAmmo, uint16_t maxCoolDown)
 {
     // Try to create randomness and generate a player id
     randomSeed(analogRead(A0));
-    playerId = random() % 1024;
+    playerId = random();
     teamId = teamId;
 
     Serial.print(F("Game::setup: Starting as player #"));
@@ -107,12 +107,17 @@ void Game::setup(uint8_t teamId, uint8_t maxHealth, uint8_t maxAmmo, uint16_t ma
     notifyEvent(GameEventType::GAME_INITALIZED);
 }
 
-void Game::onReceivedShot(uint32_t code)
+void Game::onReceivedShot(uint8_t teamId, uint8_t playerId)
 {
-    if (code == 88)
+    bool isFreeForAll = teamId == 0 && this->teamId == 0;
+    bool isShotFromOtherPlayer = playerId != this->playerId;
+
+    if ((isFreeForAll || teamId != this->teamId) && isShotFromOtherPlayer)
     {
-        Serial.print(F("Game::onShot: Received a shot from "));
-        Serial.println(code);
+        Serial.print(F("Game::onShot: Received a shot from player "));
+        Serial.print(playerId);
+        Serial.print(F(" on team "));
+        Serial.println(teamId);
         handleHit();
     }
 }
@@ -132,7 +137,7 @@ uint8_t Game::getPlayerId()
     return playerId;
 }
 
-uint8_t Game::getMaxHealth()
+uint16_t Game::getMaxHealth()
 {
     return maxHealth;
 }
@@ -163,17 +168,22 @@ void Game::addListener(GameListener *listener)
     }
 }
 
-uint8_t Game::getCurrentHealth()
+uint16_t Game::getCurrentHealth()
 {
     return health;
 }
 
-uint8_t Game::getCurrentAmmo()
+uint16_t Game::getCurrentAmmo()
 {
     return ammo;
 }
 
-uint8_t Game::getMaxAmmo()
+uint16_t Game::getMaxAmmo()
 {
     return maxAmmo;
+}
+
+uint8_t Game::getTeamId()
+{
+    return teamId;
 }

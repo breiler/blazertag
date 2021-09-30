@@ -77,21 +77,33 @@ void Input::readIR()
 {
     if (IrReceiver.decode())
     {
-        if (IrReceiver.decodedIRData.decodedRawData != 0)
+        if (IrReceiver.decodeRC6())
         {
-            notifyShot(IrReceiver.decodedIRData.decodedRawData);
+            Serial.print("r: ");
+            Serial.print(IrReceiver.decodedIRData.decodedRawData);
+            Serial.print(" c: ");
+            Serial.print(IrReceiver.decodedIRData.command);
+            Serial.print(" p: ");
+            Serial.print(IrReceiver.decodedIRData.protocol);
+            Serial.print(" a: ");
+            Serial.println(IrReceiver.decodedIRData.address);
+
+            if (IrReceiver.decodedIRData.command != 0)
+            {
+                notifyShot(IrReceiver.decodedIRData.address, IrReceiver.decodedIRData.command);
+            }
         }
         IrReceiver.resume();
     }
 }
 
-void Input::notifyShot(unsigned int code)
+void Input::notifyShot(uint8_t teamId, uint8_t playerId)
 {
     for (int i = 0; i < NUMBER_OF_INPUT_LISTENERS; i++)
     {
         if (listeners[i] != 0)
         {
-            listeners[i]->onReceivedShot(code);
+            listeners[i]->onReceivedShot(teamId, playerId);
         }
     }
 }

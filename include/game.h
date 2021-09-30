@@ -18,31 +18,32 @@ private:
     uint8_t playerId;
     uint8_t teamId;
 
-    uint8_t health;
-    uint8_t ammo;
+    uint16_t health;
+    uint16_t ammo;
 
-    uint8_t maxHealth;
-    uint8_t maxAmmo;
+    uint16_t maxHealth;
+    uint16_t maxAmmo;
     uint16_t maxCoolDown;
 
     void handleFire();
     void handleHit();
-    void onReceivedShot(uint32_t code);
+    void onReceivedShot(uint8_t teamId, uint8_t playerId);
     void onFire();
     void onStopFire();
     void notifyEvent(GameEventType eventType);
 
 public:
     Game();
-    void setup(uint8_t teamId, uint8_t maxHealth, uint8_t maxAmmo, uint16_t maxCoolDown);
+    void setup(uint8_t teamId, uint16_t maxHealth, uint16_t maxAmmo, uint16_t maxCoolDown);
     void update();
     void addListener(GameListener *listener);
 
+    uint8_t getTeamId();
     uint8_t getPlayerId();
-    uint8_t getCurrentHealth();
-    uint8_t getMaxHealth();
-    uint8_t getCurrentAmmo();
-    uint8_t getMaxAmmo();
+    uint16_t getCurrentHealth();
+    uint16_t getMaxHealth();
+    uint16_t getCurrentAmmo();
+    uint16_t getMaxAmmo();
     uint16_t getCurrentCoolDown();
     uint16_t getMaxCoolDown();
 };

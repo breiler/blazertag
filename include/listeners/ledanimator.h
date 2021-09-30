@@ -8,7 +8,8 @@
 enum AnimationType {
     ANIMATION_HIT,
     ANIMATION_IDLE,
-    ANIMATION_FIRE
+    ANIMATION_FIRE,
+    ANIMATION_GAME_OVER
 };
 
 class LedAnimator : public GameListener
@@ -23,6 +24,7 @@ private:
     void handleIdleAnimation();
     void handleFireAnimation();
     void handleHitAnimation();
+    void handleGameOverAnimation();
 
 public:
     LedAnimator();

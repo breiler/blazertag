@@ -3,12 +3,13 @@
 #include "input.h"
 #include "listeners/ledanimator.h"
 #include "listeners/oled.h"
+#include "listeners/irsender.h"
 
 // Game attributes
 #define TEAM_ID 0
 #define MAX_LIFE 10
-#define MAX_AMMO 30
-#define COOL_DOWN 1000
+#define MAX_AMMO 999
+#define COOL_DOWN 300 //ms
 
 // IO
 #define TRIGGER_PIN 2
@@ -18,6 +19,7 @@ Input input;
 Game game;
 LedAnimator ledAnimator;
 Oled oled;
+IRSender sender;
 
 void setup()
 {
@@ -39,6 +41,9 @@ void setup()
     // Add Oled
     oled.setup(&game);
     game.addListener(&oled);
+
+    sender.setup(&game);
+    game.addListener(&sender);
 }
 
 void loop()

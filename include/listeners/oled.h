@@ -27,8 +27,6 @@
 // Bit-Bang the I2C bus
 #define USE_HW_I2C 1
 
-static uint8_t *ucBackBuffer = NULL;
-
 enum DisplayState {
     DISPLAY_STATUS,
     DISPLAY_GAME_OVER

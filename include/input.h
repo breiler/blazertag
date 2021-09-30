@@ -19,7 +19,7 @@ class Input {
         void readIR();
         void readTrigger();
 
-        void notifyShot(unsigned int code);
+        void notifyShot(uint8_t teamId, uint8_t playerId);
         void notifyFiring();
         void notifyStopFiring();
 

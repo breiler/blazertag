@@ -21,7 +21,7 @@ void Oled::setup(Game *game)
         char *msgs[] = {(char *)"SSD1306 @ 0x3C", (char *)"SSD1306 @ 0x3D", (char *)"SH1106 @ 0x3C", (char *)"SH1106 @ 0x3D"};
         oledFill(&ssoled, 0, 1);
         oledWriteString(&ssoled, 0, 0, 0, msgs[rc], FONT_NORMAL, 0, 1);
-        oledSetBackBuffer(&ssoled, ucBackBuffer);
+        oledSetBackBuffer(&ssoled, NULL);
     }
 
     lastUpdateTime = millis();
@@ -49,6 +49,7 @@ void Oled::onGameEvent(GameEventType gameEventType)
     }
     else if (gameEventType == GameEventType::GAME_OVER ||
              gameEventType == GameEventType::HIT_DEAD ||
+             gameEventType == GameEventType::HIT_KILLED ||
              gameEventType == GameEventType::FIRING_SHOT_NO_AMMO ||
              gameEventType == GameEventType::FIRING_SHOT_NO_HEALTH)
     {
@@ -75,12 +76,16 @@ void Oled::onGameEvent(GameEventType gameEventType)
 void Oled::displayStatus(bool inverseHealth, bool inverseAmmo)
 {
     oledFill(&ssoled, 0x0, 1);
-    oledWriteString(&ssoled, 0, 28, 0, (char *)"BLAZERTAG", FONT_NORMAL, 0, 1);
+    oledWriteString(&ssoled, 0, 0, 0, (char *)"Player ", FONT_NORMAL, 0, 1);
+    oledWriteString(&ssoled, 0, -1, 0, (char *)String(game->getPlayerId()).c_str(), FONT_NORMAL, 0, 1);
+    
+    oledWriteString(&ssoled, 0, 0, 1, (char *)"  Team ", FONT_NORMAL, 0, 1);
+    oledWriteString(&ssoled, 0, -1, 1, (char *)String(game->getTeamId()).c_str(), FONT_NORMAL, 0, 1);
 
-    oledWriteString(&ssoled, 0, 24, 3, (char *)"H: ", FONT_STRETCHED, 0, 1);
+    oledWriteString(&ssoled, 0, 18, 3, (char *)"H: ", FONT_STRETCHED, 0, 1);
     oledWriteString(&ssoled, 0, -1, 3, (char *)String(game->getCurrentHealth()).c_str(), FONT_STRETCHED, inverseHealth, 1);
 
-    oledWriteString(&ssoled, 0, 24, 6, (char *)"A: ", FONT_STRETCHED, 0, 1);
+    oledWriteString(&ssoled, 0, 18, 6, (char *)"A: ", FONT_STRETCHED, 0, 1);
     oledWriteString(&ssoled, 0, -1, 6, (char *)String(game->getCurrentAmmo()).c_str(), FONT_STRETCHED, inverseAmmo, 1);
 }
 
