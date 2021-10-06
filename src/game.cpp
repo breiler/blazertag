@@ -83,12 +83,10 @@ void Game::update()
     notifyEvent(GameEventType::GAME_TICK);
 }
 
-void Game::setup(uint8_t teamId, uint16_t maxHealth, uint16_t maxAmmo, uint16_t maxCoolDown)
+void Game::setup(uint8_t playerId, uint8_t teamId, uint16_t maxHealth, uint16_t maxAmmo, uint16_t maxCoolDown)
 {
-    // Try to create randomness and generate a player id
-    randomSeed(analogRead(A0));
-    playerId = random();
-    teamId = teamId;
+    this->playerId = playerId;
+    this->teamId = teamId;
 
     Serial.print(F("Game::setup: Starting as player #"));
     Serial.print(playerId);

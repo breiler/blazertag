@@ -5,8 +5,14 @@
 
 // How many leds in your strip?
 #define NUM_LEDS 2
+
+#ifdef ARDUINO_ARCH_ESP32 
+#define DATA_PIN 22
+#define CLOCK_PIN 23
+#else 
 #define DATA_PIN 9
 #define CLOCK_PIN 8
+#endif
 
 // Define the array of leds
 CRGB leds[NUM_LEDS];
@@ -16,14 +22,13 @@ CRGB leds[NUM_LEDS];
 LedAnimator::LedAnimator()
 {
     lastUpdateTime = millis();
-    FastLED.addLeds<LPD8806, DATA_PIN, CLOCK_PIN, GRB>(leds, NUM_LEDS);
-    FastLED.clear(true);
-
     animationType = AnimationType::ANIMATION_IDLE;
 }
 
 void LedAnimator::setup(Game *game)
 {
+    FastLED.addLeds<LPD8806, DATA_PIN, CLOCK_PIN, GRB>(leds, NUM_LEDS);
+    FastLED.clear(true);
     this->game = game;
 }
 

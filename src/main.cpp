@@ -1,3 +1,5 @@
+//#define USE_IR_FEEDBACK_LED
+
 #include <Arduino.h>
 #include "game.h"
 #include "input.h"
@@ -12,7 +14,7 @@
 #define COOL_DOWN 300 //ms
 
 // IO
-#define TRIGGER_PIN 2
+#define TRIGGER_PIN 7
 #define IR_RECEIVER_PIN 12
 
 Input input;
@@ -20,6 +22,11 @@ Game game;
 LedAnimator ledAnimator;
 Oled oled;
 IRSender sender;
+
+// Try to create randomness and generate a player id
+//randomSeed(analogRead(A0));
+uint8_t playerId = 1; //= random();
+
 
 void setup()
 {
@@ -30,7 +37,7 @@ void setup()
         ; //delay for Leonardo
 
     // Initialize the game engine
-    game.setup(TEAM_ID, MAX_LIFE, MAX_AMMO, COOL_DOWN);
+    game.setup(playerId, TEAM_ID, MAX_LIFE, MAX_AMMO, COOL_DOWN);
     input.setup(IR_RECEIVER_PIN, TRIGGER_PIN);
     input.addListener(&game);
 

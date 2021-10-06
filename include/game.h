@@ -34,7 +34,7 @@ private:
 
 public:
     Game();
-    void setup(uint8_t teamId, uint16_t maxHealth, uint16_t maxAmmo, uint16_t maxCoolDown);
+    void setup(uint8_t playerId, uint8_t teamId, uint16_t maxHealth, uint16_t maxAmmo, uint16_t maxCoolDown);
     void update();
     void addListener(GameListener *listener);
 

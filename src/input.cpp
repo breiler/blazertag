@@ -31,13 +31,21 @@ void Input::setup(uint8_t irReceivePin, uint8_t triggerPin)
     this->irReceivePin = irReceivePin;
     this->triggerPin = triggerPin;
 
+    #ifdef USE_IR_FEEDBACK_LED
     Serial.print(F("Input::setup: Initializing IR feedback on pin "));
     Serial.println(LED_BUILTIN);
     pinMode(LED_BUILTIN, OUTPUT);
+    #endif
+    
 
     Serial.print(F("Input::setup: Initializing IR reciver on pin "));
     Serial.println(irReceivePin);
-    IrReceiver.begin(irReceivePin, ENABLE_LED_FEEDBACK, USE_DEFAULT_FEEDBACK_LED_PIN); // Start the receiver, enable feedback LED, take LED feedback pin from the internal boards definition
+    
+    #ifdef USE_IR_FEEDBACK_LED
+    IrReceiver.begin(irReceivePin, true, USE_DEFAULT_FEEDBACK_LED_PIN); // Start the receiver, enable feedback LED, take LED feedback pin from the internal boards definition
+    #else
+    IrReceiver.begin(irReceivePin, false, USE_DEFAULT_FEEDBACK_LED_PIN); // Start the receiver, disable feedback LED, take LED feedback pin from the internal boards definition
+    #endif
 
     Serial.print(F("Input::setup: Initialization trigger on pin "));
     Serial.println(triggerPin);
